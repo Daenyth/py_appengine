@@ -2,3 +2,19 @@ body {
     font-family: Verdana, Helvetica, sans-serif;
     background-color: #DDDDDD;
 }
+
+/*
+blockquote {
+    width: 200px;
+    float: right;
+    margin: 0px;
+    padding: 10px;
+}
+*/
+.guest_signature {
+    margin: 10px;
+}
+
+.guest_name {
+    font-weight: bold;
+}

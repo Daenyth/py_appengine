@@ -1,6 +1,7 @@
 import cgi
 import os
 
+import hashlib
 from google.appengine.api import users
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
@@ -11,6 +12,7 @@ class Greeting(db.Model):
     author = db.UserProperty()
     content = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
+    gravatar = db.StringProperty()
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -23,6 +25,7 @@ class MainPage(webapp.RequestHandler):
         else:
             url = users.create_login_url(self.request.uri)
             url_linktext = 'Login'
+            # Gravatar below is for foo@example.com as a non-logged-in user has no email to send
 
         template_values = {
                 'greetings': greetings,
@@ -39,6 +42,10 @@ class Guestbook(webapp.RequestHandler):
 
         if users.get_current_user():
             greeting.author = users.get_current_user()
+            greeting.gravatar = 'http://www.gravatar.com/avatar/'
+            greeting.gravatar += hashlib.md5(greeting.author.email().lower()).hexdigest()
+        else:
+            greeting.gravatar = 'http://www.gravatar.com/avatar/b48def645758b95537d4424c84d1a9ff'
 
         greeting.content = self.request.get('content')
         greeting.put()

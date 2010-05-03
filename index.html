@@ -1,15 +1,20 @@
 <html>
   <head>
     <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
+    <link type="text/css" rel="stylesheet" href="/stylesheets/gravatar.css" />
   </head>
   <body>
     {% for greeting in greetings %}
+    <div class="guest_signature">
+      <img src="{{ greeting.gravatar }}" />
       {% if greeting.author %}
-        <b>{{ greeting.author.nickname }}</b> wrote:
+        <span class="guest_name">{{ greeting.author.nickname }}</span> wrote:
       {% else %}
-       An anonymous person wrote:
+        <span class="anon_name">An anonymous person wrote:</span>
       {% endif %}
       <blockquote>{{ greeting.content|escape }}</blockquote>
+      <br />
+    </div>
     {% endfor %}
 
     <form action="/sign" method="post">
