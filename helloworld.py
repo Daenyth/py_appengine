@@ -9,10 +9,11 @@ from google.appengine.ext.webapp.util import run_wsgi_app
 from google.appengine.ext import db
 
 class Greeting(db.Model):
-    author = db.UserProperty()
-    content = db.StringProperty(multiline=True)
-    date = db.DateTimeProperty(auto_now_add=True)
+    author   = db.UserProperty()
+    content  = db.StringProperty(multiline=True)
+    date     = db.DateTimeProperty(auto_now_add=True)
     gravatar = db.StringProperty()
+    image    = db.BlobProperty()
 
 class MainPage(webapp.RequestHandler):
     def get(self):
@@ -25,7 +26,6 @@ class MainPage(webapp.RequestHandler):
         else:
             url = users.create_login_url(self.request.uri)
             url_linktext = 'Login'
-            # Gravatar below is for foo@example.com as a non-logged-in user has no email to send
 
         template_values = {
                 'greetings': greetings,
@@ -48,11 +48,23 @@ class Guestbook(webapp.RequestHandler):
             greeting.gravatar = 'http://www.gravatar.com/avatar/b48def645758b95537d4424c84d1a9ff'
 
         greeting.content = self.request.get('content')
+        uploaded_file = self.request.get('img')
+        greeting.image = db.Blob(uploaded_file)
         greeting.put()
         self.redirect('/')
 
+class Image(webapp.RequestHandler):
+    def get(self):
+        greeting = db.get(self.request.get("img_id"))
+        if greeting.image:
+            self.response.headers['Content-Type'] = "image/png"
+            self.response.out.write(greeting.image)
+        else:
+            self.error(404)
+
 application = webapp.WSGIApplication(
                                      [('/', MainPage),
+                                      ('/img', Image),
                                       ('/sign', Guestbook)],
                                      debug=True)
 
