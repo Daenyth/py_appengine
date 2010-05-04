@@ -2,6 +2,20 @@
   <head>
     <link type="text/css" rel="stylesheet" href="/stylesheets/main.css" />
     <link type="text/css" rel="stylesheet" href="/stylesheets/gravatar.css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      function scrollTo(selector) {
+        var targetOffset = $(selector).offset().top;
+        $('html,body').animate({scrollTop: targetOffset}, 500);
+      }
+      $(function() {
+        $("#sighider").click(function() {
+          $(this).hide()
+          $('#sigform').show(300)
+          scrollTo('#sigform')
+        });
+      });
+    </script>
   </head>
   <body>
     {% for greeting in greetings %}
@@ -10,7 +24,7 @@
       {% if greeting.author %}
         <span class="guest_name">{{ greeting.author.nickname }}</span> wrote:
       {% else %}
-        <span class="anon_name">An anonymous person wrote:</span>
+        <span class="anon_name">An anonymous person</span> wrote:
       {% endif %}
       <div><img src="img?img_id={{ greeting.key }}" /></div>
       <blockquote>{{ greeting.content|escape }}</blockquote>
@@ -18,13 +32,16 @@
     </div>
     {% endfor %}
 
-    <form action="/sign" enctype="multipart/form-data" method="post">
+    <button id=sighider>Comment</button>
+    <div id=sigform>
+      <form action="/sign" enctype="multipart/form-data" method="post">
+        <div><label>Image:</label></div>
+        <div><input type="file" name="img"/></div>
         <div><label>Message:</label></div>
         <div><textarea name="content" rows="3" cols="60"></textarea></div>
-        <div><label>Avatar:</label></div>
-        <div><input type="file" name="img"/></div>
         <div><input type="submit" value="Sign Guestbook"></div>
-    </form>
+      </form>
+    </div>
 
     <a href="{{ url }}">{{ url_linktext }}</a>
 

@@ -18,3 +18,7 @@ blockquote {
 .guest_name {
     font-weight: bold;
 }
+
+#sigform {
+    display: none;
+}
